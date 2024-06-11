@@ -1,18 +1,30 @@
-import React from 'react'
-import { View, StyleSheet, Dimensions, PixelRatio, Platform } from 'react-native'
-import {
-  Svg,
-  Rect,
-  Text,
-  G,
-  Path
-} from 'react-native-svg'
-import AbstractChart from './abstract-chart'
-const Pie = require('paths-js/pie')
+import Pie from "paths-js/pie";
+import React from "react";
+import { Dimensions, PixelRatio, Platform, View, ViewStyle } from "react-native";
+import { G, Path, Rect, Svg, Text } from "react-native-svg";
+
+import AbstractChart, { AbstractChartProps } from "./AbstractChart";
+
+export interface PieChartProps extends AbstractChartProps {
+  data: Array<any>;
+  width: number;
+  height: number;
+  accessor: string;
+  backgroundColor: string;
+  paddingLeft: string;
+  center?: Array<number>;
+  absolute?: boolean;
+  hasLegend?: boolean;
+  style?: Partial<ViewStyle>;
+  avoidFalseZero?: boolean;
+}
+
+type PieChartState = {};
+
 
 const isTabletAndroid = () => {
   const pixelDensity = PixelRatio.get();
-  dim = Dimensions.get('window');
+  const dim = Dimensions.get('window');
   const adjustedHeight = dim.height * pixelDensity;
   const adjustedWidth = dim.width * pixelDensity;
   if (pixelDensity < 2 && (adjustedWidth >= 1000 || adjustedHeight >= 1000)) {
@@ -28,7 +40,7 @@ function isIphoneX() {
   return (
     Platform.OS === 'ios' &&
     !Platform.isPad &&
-    !Platform.isTVOS &&
+    !Platform.isTV &&
     (dimen.height === 812 || dimen.width === 812)
   );
 }
@@ -114,8 +126,9 @@ const bubbleSortData = (data) => {
   }
   return fuelData.reverse();
 }
-class PieChart extends AbstractChart {
+class PieChart extends AbstractChart<PieChartProps, PieChartState> {
   render() {
+
     const shouldWeDisplayInnerText = this.props.displayText
     let RSize = 0;
     let r = 0;
